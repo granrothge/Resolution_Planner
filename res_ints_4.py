@@ -25,8 +25,8 @@ class Chopper_spec(object):
      He_press is the He pressure in ATM
      mod_file is a moderator file provided by the neutronics group
      """
-     
-     def __init__(self,instr_name,L,slit_pack,hphilims,vphilims,w=0.0254,h=0.01,sw=0.05,sh=0.05,He_press=10,He_T=300.0,mod_file='source_sct521_bu_17_1.dat'):   
+
+     def __init__(self,instr_name,L,slit_pack,hphilims,vphilims,w=0.0254,h=0.01,sw=0.05,sh=0.05,He_press=10,He_T=300.0,mod_file='source_sct521_bu_17_1.dat'):
          self.instr_name=instr_name
          self.L=L
          self.w=w
@@ -86,18 +86,18 @@ def domega(Ei,Ef,L,dtm,dtc,dtd):
      vi=E2V(Ei)
      vf=E2V(Ef)
      return mn*sqrt(((vi**3.0)/L[0]+(vf**3.0)*L[1]/L[0]/L[2])**2.0*(dtm**2.0)+((vi**3.0)/L[0]+(vf**3.0)*(L[1]+L[0])/L[0]/L[2])**2.0*(dtc**2.0)+((vf**3.0)/L[2])**2.0*(dtd)**2.0)
-   
+
 def H2Omod_dt(E):
     """
     returns the time width of the neutron distribution as a function of energy
-    E(meV)	
+    E(meV)
     """
     E=E
     x=log(E)
     p=[-0.4494,-0.046,4.3672,0.8530,3.7389,0.1271]
     y=exp(m1tanhm2(x,p))
     return y*1e-6
-    
+
 def det_dt(w,Ef):
     """
     w is the detector width in (m)
@@ -119,22 +119,21 @@ def read_mod_file(filename):
     """
     a function to read a moderator file from the neutronics group
     """
-    fid=open(filename)
-    dattmp=fid.readlines()
-    fid.close()
-    idx=0
-    E=[]
-    flux=[]
+    with open(filename) as fid:
+        dattmp = fid.readlines()
+    idx = 0
+    E = []
+    flux = []
     while '#' in dattmp[idx]:
-       idx=idx+1
-    while  not ('#' in dattmp[idx]):
-       #print dattmp[idx]
-       tmp1=dattmp[idx].split()
-       if len(tmp1)>0:
-          E.append(eval(tmp1[0]))
-          flux.append(eval(tmp1[2]))
-       idx=idx+1 
-    flux_func=interp1d(E,flux,kind='linear')               
+        idx += 1
+    while not ('#' in dattmp[idx]):
+        # print dattmp[idx]
+        tmp1 = dattmp[idx].split()
+        if len(tmp1) > 0:
+            E.append(eval(tmp1[0]))
+            flux.append(eval(tmp1[2]))
+        idx += 1
+    flux_func = interp1d(E, flux, kind='linear')
     return flux_func
 def plot_flux(nu,Ei,Ef,Spec,He_flag=1):
      """
@@ -142,7 +141,7 @@ def plot_flux(nu,Ei,Ef,Spec,He_flag=1):
       give a range of chopper frequencies (nu) (Hz)
       an incident energy Ei (meV) and a final energy Ef (meV)
       and an instance of a spectrometer class (examples are given in the bottome of this file)
-      plot a number proportional to flux and the resolution as a function of chopper frequency  
+      plot a number proportional to flux and the resolution as a function of chopper frequency
      """
      dw=Spec.domega_in(Ei,Ef,nu)
      I=zeros(len(nu))
@@ -166,23 +165,23 @@ def plot_res_omega(nu,Ei,omega,Spec):
 	nu is the Fermi chopper speed
 	Ei is the incident energy
 	omega is a numpy array of energy transfers
-	Spec is one of the spectrometers defined at the end of the file.	
-	
-    """     
+	Spec is one of the spectrometers defined at the end of the file.
+
+    """
     Ef=Ei-omega
     dw=Spec.domega_in(Ei,Ef,nu)
     figure()
     plot(omega,dw,'bo')
     ylabel('$d(\hbar\omega)$ (meV)')
     xlabel('$\hbar\omega$ (meV)')
-    title('$E_i$ = %d meV $\\nu$ = %d Hz \n SlitPack:%s'% (Ei,nu,Spec.slit_pack.name)) 
+    title('$E_i$ = %d meV $\\nu$ = %d Hz \n SlitPack:%s'% (Ei,nu,Spec.slit_pack.name))
     show()
     return [omega,dw]
-    
+
 def plot_qrange(Ei, wmin,spec,UB=[[1,0,0],[0,1,0],[0,0,1]]):
    """
     plot_qrange(Ei, wmin,spec,UB)
-    given an Ei and a minimum energy transfer (wmin) for a given spectrometer (spec) and with a 
+    given an Ei and a minimum energy transfer (wmin) for a given spectrometer (spec) and with a
     crystal parameters and orientation defined by UB, plot the Q ranges accesible by the instrument
     predefined values for several chopper spectrometers are given at the end of this file.
    """
@@ -230,7 +229,7 @@ def plot_qrange(Ei, wmin,spec,UB=[[1,0,0],[0,1,0],[0,0,1]]):
    xlabel('|Q|')
    ylabel('$\omega$')
    show()
-        
+
 def plot_qlims(mins,maxs,mins2,maxs2,omega,idx):
    """
    """
@@ -239,10 +238,10 @@ def plot_qlims(mins,maxs,mins2,maxs2,omega,idx):
    plot(mins2[idx,:],omega,'r')
    plot(maxs2[idx,:],omega,'r')
    ylabel('$\omega$')
-   
-    
-       
-       
+
+
+
+
 
 #define default slit packages
 SEQ_100=Slit_pack(0.00203,0.58,'SEQ-100-2.03-AST')
