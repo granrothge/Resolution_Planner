@@ -4,7 +4,8 @@
 import sys
 #sys.path.append('/SNS/users/19g/SEQUOIA/commissioning/python')
 from unit_convert import E2V,E2K
-from numpy import pi, log,exp,sqrt,tanh,linspace, radians,zeros
+import numpy as np
+from numpy import pi, log, exp, sqrt, tanh, linspace, radians, zeros
 from slit_pack import Slit_pack
 from scipy.interpolate import interp1d
 from pylab import figure, plot, subplot, show, xlabel, ylabel, title
@@ -87,6 +88,15 @@ def domega(Ei,Ef,L,dtm,dtc,dtd):
      vf=E2V(Ef)
      return mn*sqrt(((vi**3.0)/L[0]+(vf**3.0)*L[1]/L[0]/L[2])**2.0*(dtm**2.0)+((vi**3.0)/L[0]+(vf**3.0)*(L[1]+L[0])/L[0]/L[2])**2.0*(dtc**2.0)+((vf**3.0)/L[2])**2.0*(dtd)**2.0)
 
+
+def interpmod_dt(Ein, filename):
+    """
+    returns the FWHM interpolated from a moderator file
+    """
+    E, flux, dt = read_file(filename)
+    return np.interp(Ein, np.array(E)*1000, np.array(dt))*1e-6
+
+
 def H2Omod_dt(E):
     """
     returns the time width of the neutron distribution as a function of energy
@@ -115,6 +125,31 @@ def m1tanhm2(x,p):
     y0=p[4]
     A=p[5]
     return (1+tanh((x-x0)/w))/2.0*m[0]*x+(1-tanh((x-x0)/w))/2.0*m[1]*x+y0+A*tanh((x-x0)/w)
+
+
+def read_file(filename):
+    """
+    read the moderator file and return 3 lists
+    E(eV), flux(n/pulse/sr/eV) and dt (mus)
+    """
+    with open(filename) as fid:
+        dattmp = fid.readlines()
+    idx = 0
+    E = []
+    flux = []
+    dt = []
+    while '#' in dattmp[idx]:
+        idx += 1
+    while not ('#' in dattmp[idx]):
+        # print dattmp[idx]
+        tmp1 = dattmp[idx].split()
+        if len(tmp1) > 0:
+            E.append(eval(tmp1[0]))
+            flux.append(eval(tmp1[2]))
+            dt.append(float(tmp1[8]))
+        idx += 1
+    return E, flux, dt
+
 def read_mod_file(filename):
     """
     a function to read a moderator file from the neutronics group
