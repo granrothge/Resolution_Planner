@@ -32,3 +32,8 @@ The Following instances of the spectrometer class are defined at the end of the 
    SEQUOIA, SEQUOIA_sloppy, SEQUOIA_700_superfine,
    SEQUOIA_1000, ARCS, ARCS_700_fine, ARCS_700_sloppy,
    ARCS_700_superfine
+
+## UB tools
+
+UB.py is a library of tools for generating and working with primarily B matrices
+There are also rotation matrix generators to generate U matrices
