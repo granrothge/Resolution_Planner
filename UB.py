@@ -1,3 +1,25 @@
+import numpy as np
+
+
+def rot(ang, axis='x'):
+    """
+    given an angle of ang in degrees
+    rotate around an axis 'x','y',or 'z'
+    """
+    ang = np.deg2rad(ang)
+    rots = {'x': np.array([[1, 0, 0],
+                          [0, np.cos(ang), -np.sin(ang)],
+                          [0, np.sin(ang), np.cos(ang)]]),
+            'y': np.array([[np.cos(ang), 0, -np.sin(ang)]
+                          [0, 1, 0],
+                          [np.sin(ang), 0, np.cos(ang)]]),
+            'z': np.array([[np.cos(ang), -np.sin(ang), 0],
+                          [np.sin(ang), np.cos(ang), 0],
+                          [0, 0, 1]])}
+    return rots[axis]
+
+
+
 def Bmat_gen(latt_con,latt_ang):
      """function to generate B Matrix given the lattice constants
      and the lattice angles
@@ -11,13 +33,13 @@ def Bmat_gen(latt_con,latt_ang):
      return Bmat(latt_con,reclist[0],latt_ang,reclist[1])
 
 def gen_rec_latt(latt_con,latt_ang,times2pi=1):
-     """ function to lattice parameters of the reciprocal lattice given the real 
+     """ function to lattice parameters of the reciprocal lattice given the real
      space lattice parameters
      inputs:
      lattice constants in angstroms
      lattice angles in radians
      """
-     from numpy import prod,sum,cos,sin,arccos,zeros,sqrt,pi     
+     from numpy import prod,sum,cos,sin,arccos,zeros,sqrt,pi
      rec_latt=zeros(3)
      rec_ang=zeros(3)
      #print latt_ang
@@ -34,7 +56,7 @@ def gen_rec_latt(latt_con,latt_ang,times2pi=1):
        rec_latt=rec_latt*2.0*pi
      return [rec_latt, rec_ang]
 def Bmat(a,b,alpha,beta):
-     """ given the real space and reciprocal space lattice parameters,  
+     """ given the real space and reciprocal space lattice parameters,
      determine the B matrix
      """
      from numpy import cos, sin, pi,zeros
@@ -51,7 +73,7 @@ def unit_vec_omega(omega):
     """
     from numpy import sin,cos
     return [cos(radians(omega)),0,-sin(radians(omega))]
-    
+
 def two_vec2U(hkl1,hkl2,B,rot1,rot2,twotheta1,twotheta2,ccwrot=0,debug=0):
      """
      """
@@ -84,7 +106,7 @@ def two_vec2U(hkl1,hkl2,B,rot1,rot2,twotheta1,twotheta2,ccwrot=0,debug=0):
 def twovec2_3unit(prim,sec):
     """
     take a primary and a secondary vector and generate 3 orthogonal unit vectors
-    out1 is along the primary 
+    out1 is along the primary
     out2 is in the plane and orthogonal to out1
     out3 is orthogonal to the plane
     """
@@ -103,7 +125,7 @@ def rot2omega(rot,twotheta,ccwrot):
        return(rot-twotheta/2.0)
     else:
        return(-rot-twotheta/2.0)
-       
+
 def omega2rot(omega,twotheta,ccwrot):
     """
     sign dependent determination of omega from rot and twotheta
@@ -111,7 +133,7 @@ def omega2rot(omega,twotheta,ccwrot):
     if ccwrot:
        return(omega+twotheta/2.0)
     else:
-       return(-omega-twotheta/2.0)       
+       return(-omega-twotheta/2.0)
 def mslice_psi_2_rot(psi,U,B,hkl,twotheta):
 
     """
@@ -122,7 +144,3 @@ def mslice_psi_2_rot(psi,U,B,hkl,twotheta):
     uw=Qw/norm(Qw)
     omega=degrees(arccos(-uw[0]))+psi
     return omega2rot(omega,twotheta,0)
-     
-    
-          
-     
