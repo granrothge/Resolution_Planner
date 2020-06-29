@@ -19,42 +19,45 @@ def rot(ang, axis='x'):
     return rots[axis]
 
 
-
-def Bmat_gen(latt_con,latt_ang):
-     """function to generate B Matrix given the lattice constants
-     and the lattice angles
-     inputs:
+def Bmat_gen(latt_con, latt_ang):
+    """function to generate B Matrix given the lattice constants
+    and the lattice angles
+    inputs:
         lattice constants in angstroms
         lattice angles in degrees
-     """
-     from numpy import pi
-     latt_ang=latt_ang*pi/180.0
-     reclist=gen_rec_latt(latt_con,latt_ang)
-     return Bmat(latt_con,reclist[0],latt_ang,reclist[1])
+    """
+    latt_ang = latt_ang*np.pi/180.0
+    reclist = gen_rec_latt(latt_con, latt_ang)
+    return Bmat(latt_con, reclist[0], latt_ang, reclist[1])
 
-def gen_rec_latt(latt_con,latt_ang,times2pi=1):
-     """ function to lattice parameters of the reciprocal lattice given the real
-     space lattice parameters
-     inputs:
-     lattice constants in angstroms
-     lattice angles in radians
-     """
-     from numpy import prod,sum,cos,sin,arccos,zeros,sqrt,pi
-     rec_latt=zeros(3)
-     rec_ang=zeros(3)
-     #print latt_ang
-     Vol=prod(latt_con)*sqrt((1.0+2.0*prod(cos(latt_ang))-sum((cos(latt_ang))**2)))
-     print (Vol)
-     rec_latt[0]=latt_con[1]*latt_con[2]*sin(latt_ang[0])/Vol
-     rec_latt[1]=latt_con[0]*latt_con[2]*sin(latt_ang[1])/Vol
-     rec_latt[2]=latt_con[0]*latt_con[1]*sin(latt_ang[2])/Vol
-     rec_ang[0]=arccos((cos(latt_ang[1])*cos(latt_ang[2])-cos(latt_ang[0]))/abs(sin(latt_ang[1])*sin(latt_ang[2])))
-     #print rec_ang[0]
-     rec_ang[1]=arccos((cos(latt_ang[0])*cos(latt_ang[2])-cos(latt_ang[1]))/abs(sin(latt_ang[0])*sin(latt_ang[2])))
-     rec_ang[2]=arccos((cos(latt_ang[0])*cos(latt_ang[1])-cos(latt_ang[2]))/abs(sin(latt_ang[0])*sin(latt_ang[1])))
-     if times2pi:
-       rec_latt=rec_latt*2.0*pi
-     return [rec_latt, rec_ang]
+
+def gen_rec_latt(latt_con, latt_ang, times2pi=1):
+    """function to lattice parameters of the reciprocal lattice given the real
+    space lattice parameters
+    inputs:
+    lattice constants in angstroms
+    lattice angles in radians
+    """
+    # from numpy import prod,sum,cos,sin,arccos,zeros,sqrt,pi
+    rec_latt = np.zeros(3)
+    rec_ang = np.zeros(3)
+    # print latt_ang
+    Vol = np.prod(latt_con)*np.sqrt((1.0+2.0*np.prod(np.cos(latt_ang))-
+          np.sum((np.cos(latt_ang))**2)))
+    print('volume={}'.format(Vol))
+    rec_latt[0] = latt_con[1]*latt_con[2]*np.sin(latt_ang[0])/Vol
+    rec_latt[1] = latt_con[0]*latt_con[2]*np.sin(latt_ang[1])/Vol
+    rec_latt[2] = latt_con[0]*latt_con[1]*np.sin(latt_ang[2])/Vol
+    rec_ang[0] = np.arccos((np.cos(latt_ang[1])*np.cos(latt_ang[2])
+                            -np.cos(latt_ang[0]))/np.abs(np.sin(latt_ang[1])*np.sin(latt_ang[2])))
+    # print rec_ang[0]
+    rec_ang[1] = np.arccos((np.cos(latt_ang[0])*np.cos(latt_ang[2])
+                            -np.cos(latt_ang[1]))/np.abs(np.sin(latt_ang[0])*np.sin(latt_ang[2])))
+    rec_ang[2] = np.arccos((np.cos(latt_ang[0])*np.cos(latt_ang[1])
+                            -np.cos(latt_ang[2]))/np.abs(np.sin(latt_ang[0])*np.sin(latt_ang[1])))
+    if times2pi:
+        rec_latt = rec_latt*2.0*np.pi
+    return [rec_latt, rec_ang]
 def Bmat(a,b,alpha,beta):
      """ given the real space and reciprocal space lattice parameters,
      determine the B matrix
