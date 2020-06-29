@@ -10,7 +10,7 @@ def rot(ang, axis='x'):
     rots = {'x': np.array([[1, 0, 0],
                           [0, np.cos(ang), -np.sin(ang)],
                           [0, np.sin(ang), np.cos(ang)]]),
-            'y': np.array([[np.cos(ang), 0, -np.sin(ang)]
+            'y': np.array([[np.cos(ang), 0, -np.sin(ang)],
                           [0, 1, 0],
                           [np.sin(ang), 0, np.cos(ang)]]),
             'z': np.array([[np.cos(ang), -np.sin(ang), 0],
