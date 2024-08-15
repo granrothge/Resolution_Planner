@@ -10,6 +10,7 @@ from slit_pack import Slit_pack
 from scipy.interpolate import interp1d
 from pylab import figure, plot, subplot, show, xlabel, ylabel, title
 from UB import Bmat_gen,gen_rec_latt,Bmat
+import matplotlib.pyplot as plt
 
 class Chopper_spec(object):
      """
@@ -213,69 +214,70 @@ def plot_res_omega(nu,Ei,omega,Spec):
     show()
     return [omega,dw]
 
-def plot_qrange(Ei, wmin,spec,UB=[[1,0,0],[0,1,0],[0,0,1]]):
-   """
+
+def plot_qrange(Ei, wmin, spec, UB=[[1,0,0],[0,1,0],[0,0,1]], ax=None):
+    """
     plot_qrange(Ei, wmin,spec,UB)
     given an Ei and a minimum energy transfer (wmin) for a given spectrometer (spec) and with a
     crystal parameters and orientation defined by UB, plot the Q ranges accesible by the instrument
     predefined values for several chopper spectrometers are given at the end of this file.
-   """
-   ki=E2K(Ei)
-   omega=linspace(wmin,Ei*0.9,100)
-   Ef=Ei-omega
-   kf=E2K(Ef)
-   hphilims=radians(spec.hphilims)
-   vphilims=radians(spec.vphilims)
-   Qxmax=-kf*sin(hphilims[1])
-   Qxmin=-kf*sin(hphilims[0])
-   Qxmin2=-kf*sin(hphilims[2])
-   Qxmax2=-kf*sin(hphilims[3])
-   Qymax=-kf*sin(vphilims[1])
-   Qymin=-kf*sin(vphilims[0])
-   Qymin2=-kf*sin(vphilims[2])
-   Qymax2=-kf*sin(vphilims[3])
-   Qzmax=ki-kf*cos(hphilims[1])
-   Qzmin=ki-kf*cos(hphilims[0])
-   Qzmax2=ki-kf*cos(hphilims[3])
-   Qzmin2=ki-kf*cos(hphilims[2])
-   Qmins=array([Qxmin,Qymin,Qzmin])
-   Qmins2=array([Qxmin2,Qymin2,Qzmin2])
-   Qmaxs=array([Qxmax,Qymax,Qzmax])
-   Qmaxs2=array([Qxmax2,Qymax2,Qzmax2])
-   hklmins=dot(UB,Qmins)
-   hklmaxs=dot(UB,Qmaxs)
-   hklmins2=dot(UB,Qmins2)
-   hklmaxs2=dot(UB,Qmaxs2)
-   figure()
-   hold('on')
-   xlbs=['$Q_x$','$Q_y$','$Q_z$']
-   for idx in range(3):
-     subplot(2,2,idx+1)
-     plot_qlims(hklmins,hklmaxs,hklmins2,hklmaxs2,omega,idx)
-     xlabel(xlbs[idx])
-   subplot(2,2,4)
-   abs_tt=abs(array(hphilims))
-   tthetamin=min(abs_tt)
-   tthetamax=max(abs_tt)
-   Qmin=sqrt(ki*ki+kf*kf-2.*ki*kf*cos(tthetamin))
-   Qmax=sqrt(ki*ki+kf*kf-2.*ki*kf*cos(tthetamax))
-   plot(Qmin,omega,'r')
-   plot(Qmax,omega,'b')
-   xlabel('|Q|')
-   ylabel('$\omega$')
-   show()
-
-def plot_qlims(mins,maxs,mins2,maxs2,omega,idx):
-   """
-   """
-   plot(mins[idx,:],omega,'b')
-   plot(maxs[idx,:],omega,'b')
-   plot(mins2[idx,:],omega,'r')
-   plot(maxs2[idx,:],omega,'r')
-   ylabel('$\omega$')
+    """
+    ki = E2K(Ei)
+    omega = linspace(wmin, Ei*0.9, 100)
+    Ef = Ei - omega
+    kf = E2K(Ef)
+    hphilims = np.radians(spec.hphilims)
+    vphilims = np.radians(spec.vphilims)
+    Qxmax = -kf*np.sin(hphilims[1])
+    Qxmin = -kf*np.sin(hphilims[0])
+    Qxmin2 = -kf*np.sin(hphilims[2])
+    Qxmax2 = -kf*np.sin(hphilims[3])
+    Qymax = -kf*np.sin(vphilims[1])
+    Qymin = -kf*np.sin(vphilims[0])
+    Qymin2 = -kf*np.sin(vphilims[2])
+    Qymax2 = -kf*np.sin(vphilims[3])
+    Qzmax = ki-kf*np.cos(hphilims[1])
+    Qzmin = ki-kf*np.cos(hphilims[0])
+    Qzmax2 = ki-kf*np.cos(hphilims[3])
+    Qzmin2 = ki-kf*np.cos(hphilims[2])
+    Qmins = np.array([Qxmin, Qymin, Qzmin])
+    Qmins2 = np.array([Qxmin2, Qymin2, Qzmin2])
+    Qmaxs = np.array([Qxmax, Qymax, Qzmax])
+    Qmaxs2 = np.array([Qxmax2, Qymax2, Qzmax2])
+    hklmins = np.dot(UB, Qmins)
+    hklmaxs = np.dot(UB, Qmaxs)
+    hklmins2 = np.dot(UB, Qmins2)
+    hklmaxs2 = np.dot(UB, Qmaxs2)
+    if ax is None:
+        f, ax = plt.subplots(nrows=2, ncols=2)
+        ax = ax.flatten()
+    xlbs = ['$Q_x$', '$Q_y$', '$Q_z$']
+    for idx in range(3):
+        plot_qlims(hklmins, hklmaxs, hklmins2, 
+                   hklmaxs2, omega, idx, ax=ax[idx])
+        ax[idx].set_xlabel(xlbs[idx])
+    abs_tt = abs(np.array(hphilims))
+    tthetamin = min(abs_tt)
+    tthetamax = max(abs_tt)
+    Qmin = np.sqrt(ki*ki+kf*kf-2.*ki*kf*np.cos(tthetamin))
+    Qmax = sqrt(ki*ki+kf*kf-2.*ki*kf*np.cos(tthetamax))
+    ax[3].plot(Qmin, omega, 'r')
+    ax[3].plot(Qmax, omega, 'b')
+    ax[3].set_xlabel('|Q|')
+    ax[3].set_ylabel('$\omega$')
 
 
-
+def plot_qlims(mins, maxs, mins2, maxs2, omega, idx, ax=None):
+    """
+    """
+    if ax is None:
+        f, ax = plt.subplots()
+    print(ax)
+    ax.plot(mins[idx, :], omega, 'b')
+    ax.plot(maxs[idx, :], omega, 'b')
+    ax.plot(mins2[idx, :], omega, 'r')
+    ax.plot(maxs2[idx, :], omega, 'r')
+    ax.set_ylabel(r'$\omega$')
 
 
 #define default slit packages
