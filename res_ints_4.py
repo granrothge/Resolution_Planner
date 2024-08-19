@@ -260,7 +260,7 @@ def plot_qrange(Ei, wmin, spec, UB=[[1,0,0],[0,1,0],[0,0,1]], ax=None):
     tthetamin = min(abs_tt)
     tthetamax = max(abs_tt)
     Qmin = np.sqrt(ki*ki+kf*kf-2.*ki*kf*np.cos(tthetamin))
-    Qmax = sqrt(ki*ki+kf*kf-2.*ki*kf*np.cos(tthetamax))
+    Qmax = np.sqrt(ki*ki+kf*kf-2.*ki*kf*np.cos(tthetamax))
     ax[3].plot(Qmin, omega, 'r')
     ax[3].plot(Qmax, omega, 'b')
     ax[3].set_xlabel('|Q|')
